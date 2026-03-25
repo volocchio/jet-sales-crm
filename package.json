@@ -1,0 +1,20 @@
+{
+  "name": "jet-sales-crm",
+  "version": "1.0.0",
+  "description": "Jet Sales CRM - Aircraft sales tracking and prospect management",
+  "private": true,
+  "scripts": {
+    "server": "node server/index.js",
+    "client": "cd client && npm start",
+    "install:all": "npm install && cd client && npm install",
+    "seed": "node server/seed.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "sql.js": "^1.10.0",
+    "uuid": "^9.0.0"
+  }
+}
