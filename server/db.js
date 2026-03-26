@@ -55,18 +55,25 @@ function initSchema() {
 
 async function initDb() {
   if (db) return db;
-  const dir = path.dirname(DB_PATH);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  const SQL = await initSqlJs();
-  if (fs.existsSync(DB_PATH)) {
-    const fileBuffer = fs.readFileSync(DB_PATH);
-    db = new SQL.Database(fileBuffer);
-  } else {
-    db = new SQL.Database();
+  try {
+    const dir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const SQL = await initSqlJs();
+    if (fs.existsSync(DB_PATH)) {
+      const fileBuffer = fs.readFileSync(DB_PATH);
+      db = new SQL.Database(fileBuffer);
+      console.log('Loaded existing database from', DB_PATH);
+    } else {
+      db = new SQL.Database();
+      console.log('Created new database');
+    }
+    db.run('PRAGMA foreign_keys = ON');
+    initSchema();
+    return db;
+  } catch (err) {
+    console.error('Failed to initialize database:', err);
+    throw err;
   }
-  db.run('PRAGMA foreign_keys = ON');
-  initSchema();
-  return db;
 }
 
 // Helper functions

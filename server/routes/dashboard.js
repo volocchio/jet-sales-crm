@@ -5,6 +5,7 @@ const router = express.Router();
 router.use(async (req, res, next) => { await getDbReady(); next(); });
 
 router.get('/', (req, res) => {
+  try {
   const totalProspects = getOne('SELECT COUNT(*) as count FROM prospects').count;
   const activeProspects = getOne(`SELECT COUNT(*) as count FROM prospects WHERE stage NOT IN ('closed_won','closed_lost')`).count;
   const closedWon = getOne(`SELECT COUNT(*) as count FROM prospects WHERE stage = 'closed_won'`).count;
@@ -52,6 +53,10 @@ router.get('/', (req, res) => {
       pipelineValue, wonValue, totalAircraft, availableAircraft, inventoryValue },
     byStage, byPriority, upcomingActivities, recentActivities,
   });
+  } catch (err) {
+    console.error('Dashboard error:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
